@@ -15,7 +15,10 @@ class App extends React.Component {
     componentDidMount() {
         fetch('/api/playlists')
             .then(response => response.json())
-            .then(data => this.setState({ playlists: data.items }));
+            .then(data => this.setState({ playlists: data.items }))
+            .catch(e => {
+                console.log(e);
+            });
     }
 
     render() {
@@ -52,7 +55,7 @@ class App extends React.Component {
 
         return (
             <div>
-                <div>HELLOOOO</div>
+                <div>Expire your old songs</div>
                 <div>{playlist_names}</div>
                 <div onClick={onSubmit}>SUBMIT</div>
             </div>

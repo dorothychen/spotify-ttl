@@ -1,5 +1,5 @@
 from flask import Flask, request, redirect, g, render_template, session, url_for, jsonify
-from auth import spotify_auth_url, spotify_auth_header, user_json
+from auth import spotify_auth_url, spotify_auth_header, spotify_refresh_token, user_json
 from playlists import get_all_playlists, get_expired_songs, create_playlist_impl, add_tracks_impl, remove_tracks_impl
 from config import CONFIG
 import database, os
@@ -19,7 +19,8 @@ database.init_app(app)
 
 @app.route("/")
 def hello():
-    return render_template('index.html')
+    # TODO make an actual homepage
+    return redirect(url_for('playlists'))
 
 
 @app.route("/auth")
@@ -31,8 +32,9 @@ def auth():
 @app.route('/spotify/callback')
 def spotify_callback():
     auth_token = request.args['code']
-    auth_header = spotify_auth_header(auth_token)
+    auth_header, refresh_token = spotify_auth_header(auth_token)
     session['auth_header'] = auth_header
+    session['refresh_token'] = refresh_token
     return redirect(url_for('playlists'))
 
 
@@ -79,11 +81,14 @@ def selected_playlist():
 
 @app.route('/api/playlists')
 def api_playlists():
-    if 'auth_header' not in session:
+    if 'auth_header' not in session or 'refresh_token' not in session:
         return redirect(url_for('auth'))
     playlists = get_all_playlists(session['auth_header'])
-    if 'error' in playlists and playlists['error']['status'] == 401:
-        return redirect(url_for('auth'))
+    if 'refresh_token' in session and 'error' in playlists and playlists['error']['status'] == 401:
+        auth_header, refresh_token = spotify_refresh_token(session['refresh_token'])
+        session['auth_header'] = auth_header
+        session['refresh_token'] = refresh_token
+        playlists = get_all_playlists(session['auth_header'])
     return playlists
 
 
@@ -98,24 +103,6 @@ def api_create_playlist():
         'NEW PLAYLIST TEST 2'
     )
     return new_playlist
-
-
-@app.route('/api/add_track')
-def add_tracks():
-    if 'auth_header' not in session:
-        return redirect(url_for('auth'))
-    playlist_id = '2GfL3lSTN5ySuIsVoqW8Sd'
-    uris = ['spotify:track:5pLpkaIRobcvPnUmclNv6o']
-    return add_tracks_impl(session['auth_header'], playlist_id, uris)
-
-
-@app.route('/api/remove_track')
-def remove_tracks():
-    if 'auth_header' not in session:
-        return redirect(url_for('auth'))
-    playlist_id = '2GfL3lSTN5ySuIsVoqW8Sd'
-    uris = ['spotify:track:5pLpkaIRobcvPnUmclNv6o']
-    return remove_tracks_impl(session['auth_header'], playlist_id, uris)
 
 
 if __name__ == "__main__":

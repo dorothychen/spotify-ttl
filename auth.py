@@ -31,6 +31,19 @@ def spotify_auth_header(auth_token):
         "redirect_uri": REDIRECT_URI
     }
 
+    return spotify_token_request(code_payload)
+
+
+def spotify_refresh_token(refresh_token):
+    code_payload = {
+        "grant_type": "refresh_token",
+        "refresh_token": refresh_token
+    }
+
+    return spotify_token_request(code_payload)
+
+
+def spotify_token_request(code_payload):
     # Python 3 or above
     if sys.version_info[0] >= 3:
         base64encoded = base64.b64encode(("{}:{}".format(CLIENT_ID, CLIENT_SECRET)).encode())
@@ -42,13 +55,14 @@ def spotify_auth_header(auth_token):
     post_request = requests.post(SPOTIFY_TOKEN_URL, data=code_payload, headers=headers)
     response_data = json.loads(post_request.text)
     access_token = response_data["access_token"]
+    refresh_token = response_data["refresh_token"]
 
     # use the access token to access Spotify API
     auth_header = {
         "Authorization": "Bearer {}".format(access_token),
         "Content-Type": 'application/json'
     }
-    return auth_header
+    return auth_header, refresh_token
 
 
 def user_json(auth_header):

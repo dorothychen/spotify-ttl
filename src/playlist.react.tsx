@@ -27,7 +27,7 @@ function Playlist({
 
     return (
         <div onClick={onClick} style={isSelected ? {backgroundColor: "lightblue"} : null}>
-            {playlist.name} {playlist.id}
+            {playlist.name}
         </div>
     );
 }
