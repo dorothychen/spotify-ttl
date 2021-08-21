@@ -1,0 +1,5 @@
+config.py
+node_modules/
+instance/
+venv/
+__pycache__/
