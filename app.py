@@ -7,8 +7,6 @@ import database, os
 
 # Reference: https://github.com/mari-linhares/spotify-flask
 
-DEFAULT_TTL_DAYS = -10
-
 app = Flask(__name__, template_folder='src')
 app.config.from_mapping(
     SECRET_KEY=CONFIG['APP_SECRET_KEY'],
@@ -55,15 +53,10 @@ def selected_playlist():
     data = request.get_json(force=True)
     source_playlist_id = data.get('source_playlist_id')
     archive_playlist_id = data.get('archive_playlist_id')
+    ttl_days = int(data.get('ttl_days'))
+    print(source_playlist_id, archive_playlist_id, ttl_days)
 
-    # TODO handle when new playlist id is null
-    # new_playlist_id = create_playlist_impl(
-    #     session['auth_header'],
-    #     user['id'],
-    #     'NEW PLAYLIST TEST 2'
-    # )
-
-    expired_tracks = get_expired_songs(session['auth_header'], source_playlist_id, DEFAULT_TTL_DAYS)
+    expired_tracks = get_expired_songs(session['auth_header'], source_playlist_id, ttl_days)
     expired_uris = [track.uri for track in expired_tracks]
     user = user_json(session['auth_header'])
     try:
