@@ -17,7 +17,6 @@ database.init_app(app)
 
 @app.route("/")
 def hello():
-    # TODO make an actual homepage
     return redirect(url_for('playlists'))
 
 
@@ -39,8 +38,8 @@ def spotify_callback():
 @app.route('/playlists')
 def playlists():
     if 'auth_header' not in session:
-        return redirect(url_for('auth'))
-    return render_template('index.html')
+        return render_template('index.html', needs_auth=True)
+    return render_template('index.html', needs_auth=False)
 
 
 ############ API ############

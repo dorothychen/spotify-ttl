@@ -5,7 +5,7 @@ import {createUseStyles} from "react-jss";
 import {useEffect, useState} from 'react';
 
 import PlaylistList from './PlaylistList.react';
-import SubmitButton from './SubmitButton.react';
+import Button from './Button.react';
 
 const useStyles = createUseStyles({
     desc: {
@@ -32,8 +32,12 @@ const useStyles = createUseStyles({
     }
 });
 
+type Props = Array<{
+    needsAuth: boolean
+}>;
 
-export default function MainView(): React.MixedElement {
+
+export default function MainView({needsAuth}: Props): React.MixedElement {
     const [playlists, setPlaylists] = useState<Array>([]);
     const [selectedSourcePlaylist, setSelectedSourcePlaylist] = useState<TPlaylist>(null);
     const [selectedArchivePlaylist, setSelectedArchivePlaylist] = useState<TPlaylist>(null);
@@ -68,10 +72,41 @@ export default function MainView(): React.MixedElement {
             .then(response => response.json())
     };
 
+    const onLogin = () => {
+        window.location.href = '/auth';
+    };
+
     const onChangeTTL = (event) => {
         setTtlDays(event.target.value);
         console.log(event.target.value);
     };
+
+    const loggedInContainer = (
+        <div>
+            <div className={styles.playlistsContainer}>
+                <PlaylistList 
+                    header="source playlist"
+                    playlists={playlists} 
+                    onPlaylistClick={(pl) => {setSelectedSourcePlaylist(pl);}} 
+                    selectedPlaylist={selectedSourcePlaylist}
+                    />
+                <PlaylistList 
+                    header="archive playlist"
+                    playlists={playlists} 
+                    onPlaylistClick={(pl) => {setSelectedArchivePlaylist(pl);}}
+                    selectedPlaylist={selectedArchivePlaylist} 
+                    />
+            </div>
+            {playlists.length > 0 && <Button label="SUBMIT" onClick={onSubmit} />}
+        </div>
+    );
+
+    const loggedOutContainer = (
+        <div>
+            Log into your Spotify account to continue.
+            <Button label="LOG IN" onClick={onLogin} />
+        </div>
+    );
 
     return (
         <div className={styles.root}>
@@ -91,22 +126,7 @@ export default function MainView(): React.MixedElement {
                 {' '}
                 <b>archive playlist</b>.
             </div>
-            <div className={styles.playlistsContainer}>
-                <PlaylistList 
-                    header="source playlist"
-                    playlists={playlists} 
-                    onPlaylistClick={(pl) => {setSelectedSourcePlaylist(pl);}} 
-                    selectedPlaylist={selectedSourcePlaylist}
-                    />
-                <PlaylistList 
-                    header="archive playlist"
-                    playlists={playlists} 
-                    onPlaylistClick={(pl) => {setSelectedArchivePlaylist(pl);}}
-                    selectedPlaylist={selectedArchivePlaylist} 
-                    />
-            </div>
-            {playlists.length > 0 && <SubmitButton onClick={onSubmit} />}
-
+            {needsAuth === 'True' ? loggedOutContainer : loggedInContainer}
         </div>
     );
 }

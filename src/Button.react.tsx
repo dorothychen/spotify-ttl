@@ -4,6 +4,7 @@ import {COLOR_PINK} from './colors';
 
 type Props = Array<{
     onClick: () => void
+    label: string,
 }>;
 
 const useStyles = createUseStyles({
@@ -23,8 +24,9 @@ const useStyles = createUseStyles({
     }
 });
 
-export default function SubmitButton({
-    onClick
+export default function Button({
+    onClick,
+    label,
 }: Props): React.MixedElement {
     const styles = useStyles();
 
@@ -32,7 +34,7 @@ export default function SubmitButton({
         <div className={styles.container}>
             <div className={styles.button} 
             onClick={onClick}>
-                SUBMIT
+                {label}
             </div>
         </div>
     );
