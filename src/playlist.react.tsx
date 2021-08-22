@@ -45,8 +45,7 @@ function Playlist({
     }
 
     return (
-        <div key={key}
-            className={styles.container}>
+        <div className={styles.container}>
             <div className={styles.playlistName}
                 onClick={onClick}
                 style={isSelected ? {backgroundColor: "lightblue"} : null}>

@@ -1,6 +1,6 @@
 module.exports = {
     entry: [
-        './src/index.react.tsx'
+        './src/App.react.tsx'
     ],
     devtool: 'inline-source-map',
     resolve: {

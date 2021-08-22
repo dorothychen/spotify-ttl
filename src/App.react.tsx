@@ -5,7 +5,8 @@ import ReactDOM from 'react-dom';
 import {createUseStyles} from "react-jss";
 import {useEffect, useState} from 'react';
 
-import Playlist from './playlist.react';
+import Playlist from './Playlist.react';
+import SubmitButton from './SubmitButton.react';
 
 
 const useStyles = createUseStyles({
@@ -71,7 +72,7 @@ function App(): React.MixedElement {
         <div className={styles.root}>
             <div className={styles.title}>Archive your old songs</div>
             <div>{playlist_names}</div>
-            <div onClick={onSubmit}>SUBMIT</div>
+            {playlists.length > 0 && <SubmitButton onClick={onSubmit} />}
         </div>
     );
 }
