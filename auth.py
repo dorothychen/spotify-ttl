@@ -55,7 +55,7 @@ def spotify_token_request(code_payload):
     post_request = requests.post(SPOTIFY_TOKEN_URL, data=code_payload, headers=headers)
     response_data = json.loads(post_request.text)
     access_token = response_data["access_token"]
-    refresh_token = response_data["refresh_token"]
+    refresh_token = response_data.get("refresh_token")
 
     # use the access token to access Spotify API
     auth_header = {
