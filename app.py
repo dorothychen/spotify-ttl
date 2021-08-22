@@ -83,7 +83,7 @@ def selected_playlist():
 def api_playlists():
     if 'auth_header' not in session or 'refresh_token' not in session:
         return redirect(url_for('auth'))
-    # playlists = get_all_playlists(session['auth_header'])
+    playlists = get_all_playlists(session['auth_header'])
     if 'refresh_token' in session:#and 'error' in playlists and playlists['error']['status'] == 401:
         auth_header, _ = spotify_refresh_token(session['refresh_token'])
         session['auth_header'] = auth_header
