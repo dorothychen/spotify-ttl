@@ -28,6 +28,9 @@ const useStyles = createUseStyles({
         paddingTop: 2,
         paddingBottom: 2,
         cursor: 'default',
+        '&:hover': {
+            backgroundColor: 'rgba(182, 216, 246, 0.4)',
+        }
     }
 });
 
@@ -48,7 +51,7 @@ function Playlist({
         <div className={styles.container}>
             <div className={styles.playlistName}
                 onClick={onClick}
-                style={isSelected ? {backgroundColor: "lightblue"} : null}>
+                style={isSelected ? {backgroundColor: "rgb(182, 216, 246)"} : null}>
                 {playlist.name}
             </div>
         </div>
