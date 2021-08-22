@@ -7,7 +7,7 @@ import database, os
 
 # Reference: https://github.com/mari-linhares/spotify-flask
 
-DEFAULT_TTL_DAYS = -1
+DEFAULT_TTL_DAYS = -10
 
 app = Flask(__name__, template_folder='src')
 app.config.from_mapping(
@@ -53,8 +53,8 @@ def selected_playlist():
         return redirect(url_for('auth'))
 
     data = request.get_json(force=True)
-    old_playlist_id = data.get('old_playlist_id')
-    new_playlist_id = data.get('new_playlist_id')
+    source_playlist_id = data.get('source_playlist_id')
+    archive_playlist_id = data.get('archive_playlist_id')
 
     # TODO handle when new playlist id is null
     # new_playlist_id = create_playlist_impl(
@@ -63,12 +63,12 @@ def selected_playlist():
     #     'NEW PLAYLIST TEST 2'
     # )
 
-    expired_tracks = get_expired_songs(session['auth_header'], old_playlist_id, DEFAULT_TTL_DAYS)
+    expired_tracks = get_expired_songs(session['auth_header'], source_playlist_id, DEFAULT_TTL_DAYS)
     expired_uris = [track.uri for track in expired_tracks]
     user = user_json(session['auth_header'])
     try:
-        add_tracks_impl(session['auth_header'], new_playlist_id, expired_uris)
-        remove_tracks_impl(session['auth_header'], old_playlist_id, expired_uris)
+        add_tracks_impl(session['auth_header'], archive_playlist_id, expired_uris)
+        remove_tracks_impl(session['auth_header'], source_playlist_id, expired_uris)
         return jsonify({'data': 
             [
                 {'name': track.name, 'uri': track.uri} 
@@ -105,5 +105,4 @@ def api_create_playlist():
 
 
 if __name__ == "__main__":
-    print (app.config)
     app.run(debug=True)

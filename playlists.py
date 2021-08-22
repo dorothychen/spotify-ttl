@@ -67,7 +67,7 @@ def add_tracks_impl(auth_header, playlist_id, uris):
 
 def remove_tracks_impl(auth_header, playlist_id, uris):
     payload = json.dumps({
-        'tracks': [{'uri': uri for uri in uris}]
+        'tracks': [{'uri': uri} for uri in uris]
     })
     url = ADD_REMOVE_TRACK_URL.format(playlist_id=playlist_id)
     resp = requests.delete(url, data=payload, headers=auth_header)

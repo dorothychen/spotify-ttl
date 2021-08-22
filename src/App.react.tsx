@@ -46,16 +46,16 @@ function App(): React.MixedElement {
     const styles = useStyles();
 
     const onSubmit = () => {
-        if (selectedPlaylist == null) {
-            throw exception('playlist cannot be null');
+        if (selectedSourcePlaylist == null || setSelectedArchivePlaylist == null) {
+            throw exception('source and archive playlists cannot be null');
         }
 
         const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
-                old_playlist_id: selectedPlaylist.id,
-                new_playlist_id: '6M07JwuTXCqOt0gbO7QYIC'
+                source_playlist_id: selectedSourcePlaylist.id,
+                archive_playlist_id: selectedArchivePlaylist.id,
             })
         };
         fetch('/api/playlist/run_ttl', requestOptions)
