@@ -4,6 +4,8 @@ import React from 'react';
 import {createUseStyles} from "react-jss";
 import Playlist from './Playlist.react';
 
+import {COLOR_PINK} from './colors';
+
 
 type Props = Array<{
     header: string,
@@ -17,7 +19,7 @@ const useStyles = createUseStyles({
         paddingRight: 30,
     },
     playlistHeader: {
-        textDecoration: 'underline',
+        fontWeight: "bold",
         paddingBottom: 8,
     }
 });
@@ -41,7 +43,9 @@ export default function PlaylistList({
 
     return (
         <div className={styles.container}>
-            <div className={styles.playlistHeader}>{header}</div>
+            <div className={styles.playlistHeader}>
+                <span style={{backgroundColor: COLOR_PINK}}>{header}</span>
+            </div>
             {playlist_names}
         </div>
     );

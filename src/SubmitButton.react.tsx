@@ -1,5 +1,6 @@
 import React from 'react';
 import {createUseStyles} from "react-jss";
+import {COLOR_PINK} from './colors';
 
 type Props = Array<{
     onClick: () => void
@@ -17,7 +18,7 @@ const useStyles = createUseStyles({
         padding: 6,
         cursor: 'pointer',
         '&:hover': {
-            boxShadow: '4px 3px 8px #ebbab9',
+            boxShadow: '4px 3px 8px ' + COLOR_PINK,
         }
     }
 });

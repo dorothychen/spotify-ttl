@@ -1,6 +1,6 @@
 import React from 'react';
 import {createUseStyles} from "react-jss";
-
+import {COLOR_BLUE} from './colors';
 
 export type Playlist = Array<{
     collaborative: boolean,
@@ -21,7 +21,7 @@ type Props = Array<{
 const useStyles = createUseStyles({
     container: {
         marginTop: 2,
-        marginBottom: 2,
+        marginBottom: 4,
     },
     playlistName: {
         display: 'inline',
@@ -29,7 +29,7 @@ const useStyles = createUseStyles({
         paddingBottom: 2,
         cursor: 'default',
         '&:hover': {
-            backgroundColor: 'rgba(182, 216, 246, 0.4)',
+            backgroundColor: 'rgba(' + COLOR_BLUE + ', 0.4)',
         }
     }
 });
@@ -51,7 +51,7 @@ function Playlist({
         <div className={styles.container}>
             <div className={styles.playlistName}
                 onClick={onClick}
-                style={isSelected ? {backgroundColor: "rgb(182, 216, 246)"} : null}>
+                style={isSelected ? {backgroundColor: "rgb("+COLOR_BLUE+")"} : null}>
                 {playlist.name}
             </div>
         </div>
