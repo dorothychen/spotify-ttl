@@ -10,6 +10,9 @@ import LogoutButton from './LogoutButton.react';
 import ConfirmTracksContainer from './ConfirmTracksContainer.react';
 
 const useStyles = createUseStyles({
+    buttonContainer: {
+        marginTop: 20,
+    },
     desc: {
         marginBottom: 16,
     },
@@ -38,6 +41,9 @@ type Props = Array<{
     needsAuth: boolean
 }>;
 
+function getIsTTLDaysInvalid(days: number): boolean {
+    return false;
+}
 
 export default function MainView({needsAuth}: Props): React.MixedElement {
     const [playlists, setPlaylists] = useState<Array>([]);
@@ -128,8 +134,11 @@ export default function MainView({needsAuth}: Props): React.MixedElement {
 
     const onChangeTTL = (event) => {
         setTtlDays(event.target.value);
-        console.log(event.target.value);
     };
+
+    const submitDisabled = selectedArchivePlaylist == null || 
+        selectedSourcePlaylist == null || 
+        getIsTTLDaysInvalid(ttlDays);
 
     const loggedInContainer = (
         <div>
@@ -147,8 +156,10 @@ export default function MainView({needsAuth}: Props): React.MixedElement {
                     selectedPlaylist={selectedArchivePlaylist} 
                     />
             </div>
-            {playlists.length > 0 && <Button label="SUBMIT" onClick={onSubmit} />}
-
+            <div className={styles.buttonsContainer}>
+                {playlists.length > 0 
+                    && <Button label="SUBMIT" onClick={onSubmit} isDisabled={submitDisabled} />}
+            </div>
             <ConfirmTracksContainer 
                 sourcePlaylist={selectedSourcePlaylist?.value}
                 archivePlaylist={selectedArchivePlaylist?.value}
