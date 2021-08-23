@@ -1,4 +1,5 @@
 from urllib.parse import urlencode
+from flask import request
 import sys, base64, json
 import requests
 import os
@@ -11,14 +12,15 @@ SPOTIFY_AUTH_URL = SPOTIFY_AUTH_BASE_URL + '/authorize'
 SPOTIFY_TOKEN_URL = SPOTIFY_AUTH_BASE_URL + '/api/token'
 SPOTIFY_USER_URL = 'https://api.spotify.com/v1/me'
 
-HOST = 'http://127.0.0.1:5000'
-REDIRECT_URI = HOST + '/spotify/callback'
+def get_redirect_uri():
+    REDIRECT_URI_PATH = 'spotify/callback'
+    return request.host_url + REDIRECT_URI_PATH
 
 def spotify_auth_url():
     params = urlencode({
         'client_id': CLIENT_ID,
         'scope': 'playlist-modify-public',
-        'redirect_uri': REDIRECT_URI,
+        'redirect_uri': get_redirect_uri(),
         'response_type': 'code'
     })
     return SPOTIFY_AUTH_URL + '?' + params
@@ -28,7 +30,7 @@ def spotify_auth_header(auth_token):
     code_payload = {
         "grant_type": "authorization_code",
         "code": str(auth_token),
-        "redirect_uri": REDIRECT_URI
+        "redirect_uri": get_redirect_uri()
     }
 
     return spotify_token_request(code_payload)
