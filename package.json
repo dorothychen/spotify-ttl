@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack --mode development",
-    "start": "webpack --mode development --watch"
+    "dev": "webpack --mode development --watch",
+    "prod": "webpack --mode production"
   },
   "keywords": [],
   "author": "",
