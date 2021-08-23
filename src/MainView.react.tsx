@@ -96,7 +96,7 @@ export default function MainView({needsAuth}: Props): React.MixedElement {
         const sourcePlaylist = selectedSourcePlaylist?.value;
         const archivePlaylist = selectedArchivePlaylist?.value;
         if (sourcePlaylist == null || archivePlaylist == null) {
-            throw exception('source and archive playlists cannot be null');
+            throw Exception('source and archive playlists cannot be null');
         }
 
         runTTL(false);
@@ -147,13 +147,13 @@ export default function MainView({needsAuth}: Props): React.MixedElement {
                     selectedPlaylist={selectedArchivePlaylist} 
                     />
             </div>
+            {playlists.length > 0 && <Button label="SUBMIT" onClick={onSubmit} />}
+
             <ConfirmTracksContainer 
                 sourcePlaylist={selectedSourcePlaylist?.value}
                 archivePlaylist={selectedArchivePlaylist?.value}
                 tracksToMove={tracksToMove}
                 />
-
-            {playlists.length > 0 && <Button label="SUBMIT" onClick={onSubmit} />}
         </div>
     );
 

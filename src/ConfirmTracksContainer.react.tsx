@@ -15,21 +15,28 @@ export default function ConfirmTracksContainer({
     archivePlaylist,
     tracksToMove
 }: Props): React.MixedElement {
-    const TOTAL_TRACKS_TO_MOVE_DESC = 
-        sourcePlaylist != null && 
-        archivePlaylist != null && 
-        tracksToMove != null 
-        ? "Submitting will move "
+    if (sourcePlaylist == null || 
+        archivePlaylist == null ||
+        tracksToMove == null) {
+        return null;
+    }
+
+    const TOTAL_TRACKS_TO_MOVE_DESC = "Submitting will move "
             + tracksToMove.length
             + " tracks from "
             + sourcePlaylist.name
             + " to "
             + archivePlaylist.name
-        : "Select your source and archive playlists."
+            + ".";
+
+    const trackNames = tracksToMove.map(track => 
+        <div key={track.uri}>{track.name}</div>
+    );
 
     return (
         <div>
             {TOTAL_TRACKS_TO_MOVE_DESC}
+            {trackNames}
         </div>
     );
 }
