@@ -10,11 +10,24 @@ type Props = Array<{
     archivePlaylist: TPlaylist,
 }>;
 
+const useStyles = createUseStyles({
+    container: {
+        marginTop: 14,
+    },
+    tracks: {
+        color: 'darkgrey',
+        fontSize: 14,
+        marginTop: 12,
+    }
+});
+
 export default function ConfirmTracksContainer({
     sourcePlaylist,
     archivePlaylist,
     tracksToMove
 }: Props): React.MixedElement {
+    const styles = useStyles();
+
     if (sourcePlaylist == null || 
         archivePlaylist == null ||
         tracksToMove == null) {
@@ -34,9 +47,11 @@ export default function ConfirmTracksContainer({
     );
 
     return (
-        <div>
+        <div className={styles.container}>
             {TOTAL_TRACKS_TO_MOVE_DESC}
-            {trackNames}
+            <div className={styles.tracks}>
+                {trackNames}
+            </div>
         </div>
     );
 }
