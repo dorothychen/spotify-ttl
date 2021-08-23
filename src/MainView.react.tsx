@@ -18,7 +18,7 @@ const useStyles = createUseStyles({
         marginTop: 24,
     },
     playlistsContainer: {
-        display: 'flex',
+        maxWidth: 300,
     },
     title: {
         fontFamily: 'Playfair Display, serif',
@@ -56,7 +56,9 @@ export default function MainView({needsAuth}: Props): React.MixedElement {
     const styles = useStyles();
 
     const onSubmit = () => {
-        if (selectedSourcePlaylist == null || setSelectedArchivePlaylist == null) {
+        const sourcePlaylist = selectedSourcePlaylist?.value;
+        const archivePlaylist = selectedArchivePlaylist?.value;
+        if (sourcePlaylist == null || archivePlaylist == null) {
             throw exception('source and archive playlists cannot be null');
         }
 
@@ -64,14 +66,13 @@ export default function MainView({needsAuth}: Props): React.MixedElement {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
-                source_playlist_id: selectedSourcePlaylist.id,
-                archive_playlist_id: selectedArchivePlaylist.id,
+                source_playlist_id: sourcePlaylist.id,
+                archive_playlist_id: archivePlaylist.id,
                 ttl_days: ttlDays,
             })
         };
         fetch('/api/playlist/run_ttl', requestOptions)
-            .then(response => response.json())
-            .then(window.location.href = '/playlists')
+            .then(response => response.json());
     };
 
     const onLogin = () => {
