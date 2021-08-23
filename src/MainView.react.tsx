@@ -6,6 +6,7 @@ import {useEffect, useState} from 'react';
 
 import PlaylistList from './PlaylistList.react';
 import Button from './Button.react';
+import LogoutButton from './LogoutButton.react';
 
 const useStyles = createUseStyles({
     desc: {
@@ -70,10 +71,31 @@ export default function MainView({needsAuth}: Props): React.MixedElement {
         };
         fetch('/api/playlist/run_ttl', requestOptions)
             .then(response => response.json())
+            .then(window.location.href = '/playlists')
     };
 
     const onLogin = () => {
         window.location.href = '/auth';
+    };
+
+    const onLogout = () => {
+        const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                logout: true,
+            })
+        };
+
+        fetch('/api/logout', requestOptions)
+            .then(response => response.json())
+            .then(response => {
+                if (response?.success === 1) {
+                    window.location.href = '/';
+                } else {
+                    // TODO error handling
+                }
+            });
     };
 
     const onChangeTTL = (event) => {
@@ -111,6 +133,7 @@ export default function MainView({needsAuth}: Props): React.MixedElement {
     return (
         <div className={styles.root}>
             <div className={styles.title}>Archive your old songs</div>
+            {needsAuth === 'False' ? <LogoutButton onClick={onLogout} /> : null}
             <div className={styles.desc}>
                 Remove songs that were added to your selected 
                 {' '}

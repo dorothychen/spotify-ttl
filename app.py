@@ -70,6 +70,11 @@ def selected_playlist():
     except Error as err:
         return jsonify([])
 
+@app.route('/api/logout', methods=["POST"])
+def api_logout():
+    session.pop('auth_header')
+    session.pop('refresh_token')
+    return jsonify({'success': 1})
 
 @app.route('/api/playlists')
 def api_playlists():
