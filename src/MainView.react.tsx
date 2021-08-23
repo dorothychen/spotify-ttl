@@ -7,6 +7,7 @@ import {useEffect, useState} from 'react';
 import PlaylistList from './PlaylistList.react';
 import Button from './Button.react';
 import LogoutButton from './LogoutButton.react';
+import ConfirmTracksContainer from './ConfirmTracksContainer.react';
 
 const useStyles = createUseStyles({
     desc: {
@@ -43,7 +44,31 @@ export default function MainView({needsAuth}: Props): React.MixedElement {
     const [selectedSourcePlaylist, setSelectedSourcePlaylist] = useState<TPlaylist>(null);
     const [selectedArchivePlaylist, setSelectedArchivePlaylist] = useState<TPlaylist>(null);
     const [ttlDays, setTtlDays] = useState<number>(30);
+    const [tracksToMove, setTracksToMove] = useState<Array<string>>(null);
 
+    const runTTL = (isDryRun: boolean): Promise | void => {
+        const sourcePlaylist = selectedSourcePlaylist?.value;
+        const archivePlaylist = selectedArchivePlaylist?.value;
+        if (sourcePlaylist == null || archivePlaylist == null) {
+            return;
+        }        
+
+        const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                source_playlist_id: sourcePlaylist.id,
+                archive_playlist_id: archivePlaylist.id,
+                ttl_days: ttlDays,
+                is_dry_run: isDryRun,
+            })
+        };
+
+        return fetch('/api/playlist/run_ttl', requestOptions)
+            .then(response => response.json());
+    }
+
+    // Fetch initial playlists
     useEffect(() => {
         fetch('/api/playlists')
             .then(response => response.json())
@@ -52,6 +77,18 @@ export default function MainView({needsAuth}: Props): React.MixedElement {
                 console.log(e);
             });
         }, []);
+
+    // Update tracks to be migrated when playlist selection changes
+    useEffect(() => {
+        const fetchPromise = runTTL(true);
+        if (fetchPromise == null) {
+            return;
+        }
+
+        fetchPromise.then(response => {
+            setTracksToMove(response.data);
+        });
+    }, [selectedSourcePlaylist, selectedArchivePlaylist, ttlDays]);
 
     const styles = useStyles();
 
@@ -62,17 +99,7 @@ export default function MainView({needsAuth}: Props): React.MixedElement {
             throw exception('source and archive playlists cannot be null');
         }
 
-        const requestOptions = {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                source_playlist_id: sourcePlaylist.id,
-                archive_playlist_id: archivePlaylist.id,
-                ttl_days: ttlDays,
-            })
-        };
-        fetch('/api/playlist/run_ttl', requestOptions)
-            .then(response => response.json());
+        runTTL(false);
     };
 
     const onLogin = () => {
@@ -120,6 +147,12 @@ export default function MainView({needsAuth}: Props): React.MixedElement {
                     selectedPlaylist={selectedArchivePlaylist} 
                     />
             </div>
+            <ConfirmTracksContainer 
+                sourcePlaylist={selectedSourcePlaylist?.value}
+                archivePlaylist={selectedArchivePlaylist?.value}
+                tracksToMove={tracksToMove}
+                />
+
             {playlists.length > 0 && <Button label="SUBMIT" onClick={onSubmit} />}
         </div>
     );

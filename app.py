@@ -53,20 +53,26 @@ def selected_playlist():
     source_playlist_id = data.get('source_playlist_id')
     archive_playlist_id = data.get('archive_playlist_id')
     ttl_days = int(data.get('ttl_days'))
-    print(source_playlist_id, archive_playlist_id, ttl_days)
+    is_dry_run = data.get('is_dry_run')
 
     expired_tracks = get_expired_songs(session['auth_header'], source_playlist_id, ttl_days)
-    expired_uris = [track.uri for track in expired_tracks]
-    user = user_json(session['auth_header'])
-    try:
-        add_tracks_impl(session['auth_header'], archive_playlist_id, expired_uris)
-        remove_tracks_impl(session['auth_header'], source_playlist_id, expired_uris)
-        return jsonify({'data': 
+    expired_tracks_json = jsonify({'data': 
             [
                 {'name': track.name, 'uri': track.uri} 
                 for track in expired_tracks
             ]
         })
+    if is_dry_run:
+        return expired_tracks_json
+
+    expired_uris = [track.uri for track in expired_tracks]
+    user = user_json(session['auth_header'])
+
+    try:
+        print("running track migration")
+        add_tracks_impl(session['auth_header'], archive_playlist_id, expired_uris)
+        remove_tracks_impl(session['auth_header'], source_playlist_id, expired_uris)
+        return expired_tracks_json
     except Error as err:
         return jsonify([])
 
