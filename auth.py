@@ -1,10 +1,10 @@
 from urllib.parse import urlencode
-from config import CONFIG
 import sys, base64, json
 import requests
+import os
 
-CLIENT_SECRET = CONFIG['CLIENT_SECRET']
-CLIENT_ID = CONFIG['CLIENT_ID']
+CLIENT_SECRET = os.environ['CLIENT_SECRET']
+CLIENT_ID = os.environ['CLIENT_ID']
 
 SPOTIFY_AUTH_BASE_URL = 'https://accounts.spotify.com'
 SPOTIFY_AUTH_URL = SPOTIFY_AUTH_BASE_URL + '/authorize'

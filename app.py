@@ -1,19 +1,21 @@
+import database, os
 from flask import Flask, request, redirect, g, render_template, session, url_for, jsonify
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from auth import spotify_auth_url, spotify_auth_header, spotify_refresh_token, user_json
 from playlists import get_all_playlists, get_expired_songs, create_playlist_impl, add_tracks_impl, remove_tracks_impl
-from config import CONFIG
-import database, os
 
 
 # Reference: https://github.com/mari-linhares/spotify-flask
-
+ 
 app = Flask(__name__, template_folder='src')
 app.config.from_mapping(
-    SECRET_KEY=CONFIG['APP_SECRET_KEY'],
+    SECRET_KEY=os.environ['APP_SECRET_KEY'],
     DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
 )
 database.init_app(app)
-
 
 @app.route("/")
 def hello():
@@ -108,4 +110,6 @@ def api_create_playlist():
 
 
 if __name__ == "__main__":
+    print("HIIII")
+    print(os.environ)
     app.run(debug=True)
