@@ -8,6 +8,8 @@ import PlaylistList from './PlaylistList.react';
 import Button from './Button.react';
 import LogoutButton from './LogoutButton.react';
 import ConfirmTracksContainer from './ConfirmTracksContainer.react';
+import TTLInput from './TTLInput.react';
+import {getIsTTLDaysInvalid} from './TTLInput.react';
 
 const useStyles = createUseStyles({
     buttonContainer: {
@@ -29,21 +31,12 @@ const useStyles = createUseStyles({
         fontSize: 56,
         marginBottom: 12,
     },
-    ttlInput: {
-        borderTop: 'None',
-        borderLeft: 'None',
-        borderRight: 'None',
-        width: 30,
-    }
 });
 
 type Props = Array<{
     needsAuth: boolean
 }>;
 
-function getIsTTLDaysInvalid(days: number): boolean {
-    return false;
-}
 
 export default function MainView({needsAuth}: Props): React.MixedElement {
     const [playlists, setPlaylists] = useState<Array>([]);
@@ -55,7 +48,9 @@ export default function MainView({needsAuth}: Props): React.MixedElement {
     const runTTL = (isDryRun: boolean): Promise | void => {
         const sourcePlaylist = selectedSourcePlaylist?.value;
         const archivePlaylist = selectedArchivePlaylist?.value;
-        if (sourcePlaylist == null || archivePlaylist == null) {
+        if (sourcePlaylist == null || 
+            archivePlaylist == null || 
+            getIsTTLDaysInvalid(ttlDays)) {
             return;
         }        
 
@@ -132,10 +127,6 @@ export default function MainView({needsAuth}: Props): React.MixedElement {
             });
     };
 
-    const onChangeTTL = (event) => {
-        setTtlDays(event.target.value);
-    };
-
     const submitDisabled = selectedArchivePlaylist == null || 
         selectedSourcePlaylist == null || 
         getIsTTLDaysInvalid(ttlDays);
@@ -185,10 +176,8 @@ export default function MainView({needsAuth}: Props): React.MixedElement {
                 <b>source playlist</b> 
                 {' '}
                 over 
-                {' '}<input type="text" 
-                    value={ttlDays}
-                    onChange={onChangeTTL}
-                    className={styles.ttlInput} /> 
+                {' '}
+                <TTLInput ttlDays={ttlDays} onChange={setTtlDays} />
                 {' '}
                 days ago, and move them to your selected 
                 {' '}
